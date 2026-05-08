@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Harsh Johiya Portfolio</title>
+    <meta name="title" content="Harsh Johiya" />
+    <meta name="description" content="Personal portfolio showcasing AI, machine learning, data science, and web development projects. Passionate about building intelligent systems and creating impactful solutions." />
+    
+    <!-- Keywords -->
+    <meta name="keywords" content="AI, Artificial Intelligence, Machine Learning, Data Science, Web Development, Python, React, Portfolio, Developer" />
+    
+    <!-- Author -->
+    <meta name="author" content="Harsh Johiya" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourname.com/" />
+    <meta property="og:title" content="Harsh Johiya | AI & Data Science Portfolio" />
+    <meta property="og:description" content="Personal portfolio showcasing AI, machine learning, data science, and web development projects." />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://yourname.com/" />
+    <meta property="twitter:title" content="Harsh Johiya | AI & Data Science Portfolio" />
+    <meta property="twitter:description" content="Personal portfolio showcasing AI, machine learning, data science, and web development projects." />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yourname.com/" />
+    <script type="module" crossorigin src="/Portfolio/assets/index-D_Uomil6.js"></script>
+    <link rel="stylesheet" crossorigin href="/Portfolio/assets/index-GZ86ibh-.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
