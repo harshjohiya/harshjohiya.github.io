@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from uuid import uuid4
 
 import chromadb
+from chromadb.config import Settings as ChromaSettings
 from groq import Groq
 from sentence_transformers import SentenceTransformer
 
 from app.config import Settings
-from app.memory import ConversationMemory
 
 UNKNOWN_RESPONSE = "I don't have information about that yet."
 
@@ -32,15 +31,17 @@ class RetrievedChunk:
 
 
 class RAGService:
-    def __init__(self, settings: Settings, memory: ConversationMemory) -> None:
+    def __init__(self, settings: Settings) -> None:
         if not settings.groq_api_key:
             raise RuntimeError("GROQ_API_KEY is required.")
 
         self.settings = settings
-        self.memory = memory
         self.groq = Groq(api_key=settings.groq_api_key)
         self.embedder = SentenceTransformer(settings.embedding_model)
-        self.chroma = chromadb.PersistentClient(path=settings.chroma_path)
+        self.chroma = chromadb.PersistentClient(
+            path=settings.chroma_path,
+            settings=ChromaSettings(anonymized_telemetry=settings.chroma_anonymized_telemetry),
+        )
         self.collection = self.chroma.get_or_create_collection(
             name=settings.chroma_collection,
             metadata={"hnsw:space": "cosine"},
@@ -50,6 +51,18 @@ class RAGService:
         if not messages:
             return "No previous conversation."
         return "\n".join(f"{message['role']}: {message['content']}" for message in messages)
+
+    def _normalize_history(self, history: list[dict[str, str]] | None) -> list[dict[str, str]]:
+        if not history:
+            return []
+
+        normalized: list[dict[str, str]] = []
+        for message in history[-self.settings.max_history_messages :]:
+            role = str(message.get("role", "")).strip().lower()
+            content = str(message.get("content", "")).strip()
+            if role in {"user", "assistant"} and content:
+                normalized.append({"role": role, "content": content[:4000]})
+        return normalized
 
     def _format_context(self, chunks: list[RetrievedChunk]) -> str:
         context_blocks = []
@@ -122,23 +135,20 @@ class RAGService:
         result = (verdict.choices[0].message.content or "").strip().upper()
         return result.startswith("YES")
 
-    def chat(self, question: str, session_id: str | None = None) -> dict:
+    def chat(self, question: str, history: list[dict[str, str]] | None = None) -> dict:
         clean_question = question.strip()
         if not clean_question:
             raise ValueError("question must not be empty")
 
-        current_session_id = session_id or str(uuid4())
-        history = self.memory.get_messages(current_session_id)
+        history_messages = self._normalize_history(history)
         chunks = self.retrieve(clean_question)
 
         if not chunks:
             answer = UNKNOWN_RESPONSE
-            self.memory.add_message(current_session_id, "user", clean_question)
-            self.memory.add_message(current_session_id, "assistant", answer)
-            return {"answer": answer, "session_id": current_session_id, "sources": []}
+            return {"answer": answer}
 
         context = self._format_context(chunks)
-        history_text = self._format_history(history)
+        history_text = self._format_history(history_messages)
         user_payload = (
             f"Retrieved Context:\n{context}\n\n"
             f"Conversation History:\n{history_text}\n\n"
@@ -149,7 +159,7 @@ class RAGService:
         )
 
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-        messages.extend(history)
+        messages.extend(history_messages)
         messages.append({"role": "user", "content": user_payload})
 
         completion = self.groq.chat.completions.create(
@@ -163,17 +173,5 @@ class RAGService:
         if not self._grounding_check(context=context, answer=answer):
             answer = UNKNOWN_RESPONSE
 
-        self.memory.add_message(current_session_id, "user", clean_question)
-        self.memory.add_message(current_session_id, "assistant", answer)
-
-        sources = [
-            {
-                "id": chunk.id,
-                "source": chunk.source,
-                "chunk_index": chunk.chunk_index,
-                "distance": chunk.distance,
-            }
-            for chunk in chunks
-        ]
-        return {"answer": answer, "session_id": current_session_id, "sources": sources}
+        return {"answer": answer}
 

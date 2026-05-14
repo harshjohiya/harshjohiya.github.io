@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 
 import chromadb
+from chromadb.config import Settings as ChromaSettings
 from sentence_transformers import SentenceTransformer
 
 from app.config import get_settings
@@ -41,7 +42,10 @@ def ingest_profile(profile_path: Path) -> None:
     chunks = chunk_text(raw_text)
     embeddings = embedder.encode(chunks, normalize_embeddings=True).tolist()
 
-    chroma = chromadb.PersistentClient(path=settings.chroma_path)
+    chroma = chromadb.PersistentClient(
+        path=settings.chroma_path,
+        settings=ChromaSettings(anonymized_telemetry=settings.chroma_anonymized_telemetry),
+    )
     collection = chroma.get_or_create_collection(
         name=settings.chroma_collection,
         metadata={"hnsw:space": "cosine"},

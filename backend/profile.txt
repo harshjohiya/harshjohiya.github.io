@@ -1,7 +1,7 @@
 Harsh Johiya - Portfolio Knowledge Base
 
 Profile Summary
-- Name: Harsh Johiya
+- Name: Harsh
 - Role: AI/ML-focused Engineering Science student building applied ML and full-stack AI products
 - Location: Bhopal, India
 - Email: johiyaharsh@gmail.com

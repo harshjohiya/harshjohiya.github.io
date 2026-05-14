@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.memory import ConversationMemory
 from app.rag import RAGService
 from app.schemas import ChatRequest, ChatResponse
 
@@ -17,6 +16,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,8 +25,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup() -> None:
-    memory = ConversationMemory(max_messages=settings.max_history_messages)
-    app.state.rag_service = RAGService(settings=settings, memory=memory)
+    app.state.rag_service = RAGService(settings=settings)
 
 
 @app.get("/health")
@@ -38,7 +37,7 @@ def health() -> dict[str, str]:
 def chat(payload: ChatRequest, request: Request) -> ChatResponse:
     result = request.app.state.rag_service.chat(
         question=payload.question,
-        session_id=payload.session_id,
+        history=[message.model_dump() for message in payload.history],
     )
     return ChatResponse(**result)
 

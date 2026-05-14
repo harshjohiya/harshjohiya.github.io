@@ -35,5 +35,10 @@ secrets/
 
 # Backend local artifacts
 backend/.venv/
+backend/venv/
 backend/__pycache__/
 backend/chroma_db/
+
+# Python local artifacts
+venv/
+**/__pycache__/

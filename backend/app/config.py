@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     chroma_path: str = Field(default="./chroma_db")
     chroma_collection: str = Field(default="portfolio_profile")
+    chroma_anonymized_telemetry: bool = Field(default=False)
 
     embedding_model: str = Field(default="sentence-transformers/all-MiniLM-L6-v2")
     top_k: int = Field(default=4, ge=1, le=20)
@@ -17,7 +18,12 @@ class Settings(BaseSettings):
     max_context_chars: int = Field(default=7000, ge=1000, le=20000)
 
     max_history_messages: int = Field(default=12, ge=2, le=50)
-    cors_origins: str = Field(default="http://localhost:5173,http://127.0.0.1:5173")
+    cors_origins: str = Field(
+        default=(
+            "http://localhost:5173,http://127.0.0.1:5173,"
+            "http://localhost:8080,http://127.0.0.1:8080"
+        )
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",
