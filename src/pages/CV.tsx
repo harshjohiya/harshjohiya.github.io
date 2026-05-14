@@ -42,7 +42,10 @@ export default function CV() {
               asChild
               className="gap-2 rounded-full hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
             >
-              <a href="/cv.pdf" download="Harsh_Johiya_CV.pdf">
+              <a
+             href="/cv.pdf"
+               download="Harsh_Johiya_CV.pdf"
+              >
                 <Download size={16} />
                 Download CV
               </a>
@@ -51,7 +54,7 @@ export default function CV() {
 
           <div className="bg-background/60 backdrop-blur-md rounded-2xl overflow-hidden shadow-2xl border border-border/50">
             <iframe
-              src="/cv.pdf"
+            src="/cv.pdf"
               className="w-full h-[calc(100vh-16rem)]"
               title="CV PDF Viewer"
             />
@@ -60,7 +63,7 @@ export default function CV() {
           <p className="text-center text-sm text-muted-foreground mt-6">
             If the PDF doesn't load, you can{' '}
             <a
-              href="/cv.pdf"
+             href="/cv.pdf"
               download="Harsh_Johiya_CV.pdf"
               className="text-primary hover:underline font-medium"
             >

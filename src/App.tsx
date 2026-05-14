@@ -12,6 +12,7 @@ import CV from "./pages/CV";
 import ProjectsPage from "./pages/ProjectsPage";
 import Blog from "./pages/Blog";
 import ContactPage from "./pages/ContactPage";
+import { ChatbotButton } from "./components/portfolio/ChatbotButton";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,7 @@ const App = () => (
         <Sonner />
 
         <BrowserRouter
-          basename="/Portfolio"
+          
           future={{
             v7_relativeSplatPath: true,
             v7_startTransition: true,
@@ -45,6 +46,7 @@ const App = () => (
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatbotButton />
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
