@@ -1,0 +1,89 @@
+Harsh Johiya - Portfolio Knowledge Base
+
+Profile Summary
+- Name: Harsh Johiya
+- Role: AI/ML-focused Engineering Science student building applied ML and full-stack AI products
+- Location: Bhopal, India
+- Email: johiyaharsh@gmail.com
+- GitHub: https://github.com/harshjohiya
+- LinkedIn: https://linkedin.com/in/harsh-johiya
+
+About
+- Harsh is a BS Engineering Science student at IISER Bhopal.
+- Focus areas include data science, machine learning, deep learning, and production-grade AI applications.
+- He works hands-on from ideation to deployment, including data pipelines, model training, evaluation, and app integration.
+
+Education
+- Indian Institute of Science Education and Research (IISER), Bhopal
+  - BS Engineering Science
+  - Aug 2024 - Apr 2028
+- SMB Geeta Sr. Sec. School, Naraingarh
+  - Class 12th: 95.6%
+  - Class 10th: 100%
+- Relevant coursework
+  - Data Structures and Algorithms
+  - Introduction to C
+  - Probability and Statistic
+  - Econometric
+
+Experience
+- Quantitative Research Consultant, WorldQuant (Part-time)
+  - Apr 2026 - Present
+- AI Intern, Baseraa (Remote)
+  - May 2025 - Jan 2026
+  - Trained and fine-tuned YOLOv8 object detection models on large annotated datasets using PyTorch.
+  - Built an end-to-end pipeline integrating detection, segmentation (SAM), and reconstruction.
+  - Implemented 3D Gaussian Splatting for real-time scene reconstruction and reduced rendering latency by 30%.
+  - Tech stack: Python, PyTorch, OpenCV, YOLOv8, SAM, LaMa, Stable Diffusion, NumPy, pandas, 3DGS.
+
+Technical Skills
+- Programming Languages: Python, SQL, C, C++
+- Machine Learning and Deep Learning: Scikit-learn, TensorFlow, Keras, PyTorch
+- Data Analysis and Visualization: NumPy, Pandas, Matplotlib, Seaborn, Plotly, Tableau, Power BI
+- Tools and Frameworks: Jupyter, Git, GitHub, VS Code, Colab, Streamlit, Flask, FastAPI, CUDA, OpenCV
+
+Featured Projects
+1) RiskLens
+- Description: AI-powered credit risk assessment platform with real-time scoring and explainable predictions.
+- Stack: React, TypeScript, Python, FastAPI, LightGBM, SHAP, Tailwind CSS
+- GitHub: https://github.com/harshjohiya/RiskLens
+- Demo: https://risklens1.vercel.app
+- Highlights:
+  - Built ML-powered real-time and batch credit scoring workflows.
+  - LightGBM model achieved 0.8651 ROC-AUC on 307K+ loan records.
+  - Integrated SHAP explainability and achieved KS statistic of 0.4011.
+  - Implemented JWT authentication with React frontend and FastAPI backend.
+  - Converted probability of default into 0-1000 score across 4 risk bands.
+
+2) DeepTrust
+- Description: AI-powered deepfake detection system with explainable predictions and confidence scoring.
+- Stack: PyTorch, EfficientNet-B0, FastAPI, React, Grad-CAM, MediaPipe, OpenCV
+- GitHub: https://github.com/harshjohiya/DeepTrust
+- Demo: https://deeptrust1.vercel.app/
+- Highlights:
+  - Built image and video deepfake detection with EfficientNet-B0.
+  - Added Grad-CAM visual explanations for decision transparency.
+  - Implemented REAL/FAKE/UNCERTAIN three-tier classification.
+  - Built face detection and preprocessing pipeline with MediaPipe.
+  - Achieved approximately 91-92% test accuracy with 93% fake recall on Celeb-DF v2.
+
+3) HindiASR
+- Description: End-to-end Hindi ASR fine-tuning with Whisper and error analysis.
+- Stack: Python, Whisper, PyTorch, Transformers, Pandas, Scikit-learn
+- GitHub: https://github.com/harshjohiya/HindiASR
+- Highlights:
+  - Fine-tuned Whisper-small for in-domain Hindi conversational ASR.
+  - Built data acquisition and preprocessing workflows.
+  - Implemented structured error taxonomy and post-processing techniques.
+  - Ran baseline vs fine-tuned WER comparisons.
+
+4) Food Delivery Time Prediction
+- Description: Full-stack app for food delivery ETA prediction using ML regression.
+- Stack: FastAPI, React, TypeScript, Scikit-learn, Tailwind CSS, Vite
+- GitHub: https://github.com/harshjohiya/Food-Delivery-Time-Prediction
+- Highlights:
+  - Built end-to-end ETA prediction workflow with trained scikit-learn regression.
+  - Used Haversine formula for real-time distance features.
+  - Built FastAPI backend with validation, CORS, and error handling.
+  - Built responsive React TypeScript frontend.
+
