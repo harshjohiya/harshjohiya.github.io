@@ -1,0 +1,32 @@
+TEST: how much experience does harsh have
+============================================================
+CHUNKS FOUND: 6
+  [0] dist=0.4613: About
+- Harsh is a BS Engineering Science student at IISER Bhopal.
+- Focus areas include data science, machine learning, deep learning, and production-grade AI applications.
+- He works hands-on from i
+  [1] dist=0.6389: Profile Summary
+- Name: Harsh
+- Role: AI/ML-focused Engineering Science student building applied ML and full-stack AI products
+- Location: Bhopal, India
+- Email: johiyaharsh@gmail.com
+- GitHub: https:
+  [2] dist=0.7073: Harsh Johiya - Portfolio Knowledge Base
+  [3] dist=0.7789: Featured Projects
+1) RiskLens
+- Description: AI-powered credit risk assessment platform with real-time scoring and explainable predictions.
+- Stack: React, TypeScript, Python, FastAPI, LightGBM, SHAP,
+  [4] dist=0.8035: achieved 0.8651 ROC-AUC on 307K+ loan records.
+  - Integrated SHAP explainability and achieved KS statistic of 0.4011.
+  - Implemented JWT authentication with React frontend and FastAPI backend.
+  - C
+  [5] dist=0.8377: Technical Skills
+- Programming Languages: Python, SQL, C, C++
+- Machine Learning and Deep Learning: Scikit-learn, TensorFlow, Keras, PyTorch
+- Data Analysis and Visualization: NumPy, Pandas, Matplotli
+
+FULL CHAT ANSWER:
+============================================================
+The information about Harsh's experience is not available in the retrieved context. 
+
+You can ask about his projects (e.g., RiskLens, DeepTrust), technical skills (e.g., Python, PyTorch, FastAPI), education (e.g., BS Engineering Science at IISER Bhopal), or AI/ML work (e.g., deep learning, computer vision, NLP) for more information.

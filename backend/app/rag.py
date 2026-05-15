@@ -22,7 +22,7 @@ UNKNOWN_RESPONSE = (
 
 SYSTEM_PROMPT = """You are Harsh Johiya's AI portfolio assistant.
 
-Answer strictly from the retrieved context. Do not invent or guess any details — no project names, skills, dates, links, technologies, or experience that are not explicitly in the context.
+Answer strictly from the retrieved context. Do not invent or guess any details \u2014 no project names, skills, dates, links, technologies, or experience that are not explicitly in the context.
 
 If the requested information is NOT available in the retrieved context:
 1. Clearly state the information is not available in Harsh's portfolio knowledge base.
@@ -37,15 +37,24 @@ If the requested information is NOT available in the retrieved context:
 
 Keep responses concise, technical, professional, and structured."""
 
-QUERY_EXPANSION_PROMPT = """You are a search query expansion assistant for a personal portfolio knowledge base.
+QUERY_EXPANSION_PROMPT = """You are a search query expansion assistant for a personal portfolio/resume knowledge base.
 
-Given a user's question, generate 5 alternative search queries that could retrieve the same information 
-from a portfolio document. These should be:
-- Different phrasings of the same intent
-- More specific keyword-style searches
-- Shorter, direct versions of the question
+The knowledge base has these EXACT section headers:
+- Profile Summary
+- About
+- Education
+- Experience
+- Technical Skills
+- Featured Projects
 
-Return ONLY the 5 queries, one per line, no numbering, no explanation."""
+Given a user's question, generate 5 search queries. ALWAYS include:
+1. The most relevant EXACT section header (e.g., "Experience", "Technical Skills")
+2. Specific entity names (e.g., "Baseraa", "WorldQuant", "RiskLens")
+3. Different phrasings of the same intent
+4. Keywords that appear literally in a resume (e.g., "intern", "consultant", "worked at")
+5. A direct keyword match
+
+Return ONLY 5 queries, one per line, no numbering, no explanation."""
 
 
 @dataclass(frozen=True)
@@ -113,7 +122,7 @@ class RAGService:
             variants = [line.strip() for line in raw.splitlines() if line.strip()]
             # Always include the original question
             all_queries = [question] + variants[:5]
-            print(f"[RAG] Query expansion — original + {len(variants)} variants:")
+            print(f"[RAG] Query expansion - original + {len(variants)} variants:")
             for q in all_queries:
                 print(f"[RAG]   -> {q}")
             return all_queries
@@ -122,11 +131,11 @@ class RAGService:
             return [question]
 
     # ------------------------------------------------------------------
-    # Low-level single-query retrieval
+    # Low-level single-query retrieval (embedding-based)
     # ------------------------------------------------------------------
 
-    def _retrieve_single(self, query: str) -> dict[str, RetrievedChunk]:
-        """Retrieve chunks for one query. Returns {chunk_id: RetrievedChunk}."""
+    def _retrieve_by_embedding(self, query: str) -> dict[str, RetrievedChunk]:
+        """Retrieve chunks via embedding similarity."""
         query_embedding = self.embedder.encode(query, normalize_embeddings=True).tolist()
         results = self.collection.query(
             query_embeddings=[query_embedding],
@@ -143,7 +152,13 @@ class RAGService:
         for item_id, document, metadata, distance in zip(ids, documents, metadatas, distances):
             if not document:
                 continue
-            if distance is not None and float(distance) > self.settings.similarity_threshold:
+            dist = float(distance) if distance is not None else 99.0
+            is_close_enough = dist <= self.settings.similarity_threshold
+            has_keyword = any(
+                kw in document.lower()
+                for kw in ["experience", "intern", "worldquant", "baseraa", "work", "consultant"]
+            )
+            if not is_close_enough and not has_keyword:
                 continue
             source = str((metadata or {}).get("source", "profile.txt"))
             chunk_index = int((metadata or {}).get("chunk_index", -1))
@@ -152,35 +167,85 @@ class RAGService:
                 source=source,
                 chunk_index=chunk_index,
                 document=document,
-                distance=float(distance) if distance is not None else None,
+                distance=dist,
             )
         return chunks
 
     # ------------------------------------------------------------------
-    # Multi-query retrieval with deduplication and re-ranking
+    # Keyword/full-text retrieval using query_texts
+    # ------------------------------------------------------------------
+
+    def _retrieve_by_text(self, query: str) -> dict[str, RetrievedChunk]:
+        """Retrieve chunks via ChromaDB's built-in full-text search."""
+        try:
+            results = self.collection.query(
+                query_texts=[query],
+                n_results=self.settings.top_k,
+                include=["documents", "metadatas", "distances"],
+            )
+
+            ids = results["ids"][0] if results["ids"] else []
+            documents = results["documents"][0] if results["documents"] else []
+            metadatas = results["metadatas"][0] if results["metadatas"] else []
+            distances = results["distances"][0] if results["distances"] else []
+
+            chunks: dict[str, RetrievedChunk] = {}
+            for item_id, document, metadata, distance in zip(ids, documents, metadatas, distances):
+                if not document:
+                    continue
+                dist = float(distance) if distance is not None else 99.0
+                is_close_enough = dist <= self.settings.similarity_threshold
+                has_keyword = any(
+                    kw in document.lower()
+                    for kw in ["experience", "intern", "worldquant", "baseraa", "work", "consultant"]
+                )
+                if not is_close_enough and not has_keyword:
+                    continue
+                source = str((metadata or {}).get("source", "profile.txt"))
+                chunk_index = int((metadata or {}).get("chunk_index", -1))
+                chunks[str(item_id)] = RetrievedChunk(
+                    id=str(item_id),
+                    source=source,
+                    chunk_index=chunk_index,
+                    document=document,
+                    distance=dist,
+                )
+            return chunks
+        except Exception as exc:
+            print(f"[RAG] Text search failed ({exc}), returning empty")
+            return {}
+
+    # ------------------------------------------------------------------
+    # Multi-query retrieval with hybrid search and deduplication
     # ------------------------------------------------------------------
 
     def retrieve(self, question: str) -> list[RetrievedChunk]:
         """
-        Expand the question into multiple variants, retrieve chunks for each,
-        deduplicate by chunk ID, keep the best (lowest) distance per chunk,
-        and return sorted by distance ascending.
+        1. Expand question into multiple variants via LLM
+        2. For each variant, run BOTH embedding search AND text search
+        3. Deduplicate by chunk ID, keep best (lowest) distance
+        4. Return sorted by distance ascending
         """
         queries = self._expand_query(question)
 
-        # Merge: keep best distance per chunk ID across all queries
+        # Merge: keep best distance per chunk ID across all queries + methods
         merged: dict[str, RetrievedChunk] = {}
-        for query in queries:
-            hits = self._retrieve_single(query)
+
+        def _merge(hits: dict[str, RetrievedChunk]) -> None:
             for chunk_id, chunk in hits.items():
                 if chunk_id not in merged:
                     merged[chunk_id] = chunk
                 else:
-                    # Keep the version with the lower (better) distance
                     existing = merged[chunk_id]
                     if (chunk.distance is not None and existing.distance is not None
                             and chunk.distance < existing.distance):
                         merged[chunk_id] = chunk
+
+        for query in queries:
+            # Embedding-based search
+            _merge(self._retrieve_by_embedding(query))
+            # Full-text / keyword search
+            _merge(self._retrieve_by_text(query))
 
         # Sort by distance ascending (most relevant first)
         ranked = sorted(
@@ -188,7 +253,7 @@ class RAGService:
             key=lambda c: c.distance if c.distance is not None else 99.0,
         )
 
-        print(f"[RAG] Multi-query merged {len(ranked)} unique chunks from {len(queries)} queries")
+        print(f"[RAG] Hybrid multi-query: {len(ranked)} unique chunks from {len(queries)} queries")
         for i, chunk in enumerate(ranked):
             preview = (chunk.document[:100] + "...") if len(chunk.document) > 100 else chunk.document
             print(f"[RAG]   [{i}] id={chunk.id} dist={chunk.distance:.4f}: {preview}")
@@ -237,13 +302,13 @@ class RAGService:
         chunks = self.retrieve(clean_question)
 
         if not chunks:
-            print(f"[RAG] No chunks retrieved for question: '{clean_question}' — returning helpful fallback")
+            print(f"[RAG] No chunks retrieved for: '{clean_question}'")
             return {"answer": UNKNOWN_RESPONSE}
 
         context = self._format_context(chunks)
         history_text = self._format_history(history_messages)
 
-        print(f"[RAG] Context sent to LLM ({len(context)} chars): {context[:200]}...")
+        print(f"[RAG] Context sent to LLM ({len(context)} chars)")
 
         user_payload = (
             f"Retrieved Context:\n{context}\n\n"

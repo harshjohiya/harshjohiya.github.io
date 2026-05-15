@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     chroma_anonymized_telemetry: bool = Field(default=False)
 
     embedding_model: str = Field(default="sentence-transformers/all-MiniLM-L6-v2")
-    top_k: int = Field(default=5, ge=1, le=20)
+    top_k: int = Field(default=8, ge=1, le=20)
     similarity_threshold: float = Field(default=1.2, ge=0.0, le=2.0)
     max_context_chars: int = Field(default=7000, ge=1000, le=20000)
 
