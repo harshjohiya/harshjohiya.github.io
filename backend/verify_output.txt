@@ -1,0 +1,114 @@
+﻿=== RAG Verification ===
+ChromaDB path: H:\my_project\Personal Website\backend\chroma_db
+Path exists: True
+Collection: portfolio_profile
+Embedding model: sentence-transformers/all-MiniLM-L6-v2
+
+Total documents in collection: 13
+
+All document IDs: ['profile-0', 'profile-1', 'profile-2', 'profile-3', 'profile-4', 'profile-5', 'profile-6', 'profile-7', 'profile-8', 'profile-9', 'profile-10', 'profile-11', 'profile-12']
+
+  [profile-0] meta={'chunk_index': 0, 'source': 'profile.txt'}
+    Harsh Johiya - Portfolio Knowledge Base
+
+  [profile-1] meta={'chunk_index': 1, 'source': 'profile.txt'}
+    Profile Summary
+- Name: Harsh
+- Role: AI/ML-focused Engineering Science student building applied ML and full-stack AI products
+- Location: Bhopal, Ind...
+
+  [profile-2] meta={'chunk_index': 2, 'source': 'profile.txt'}
+    About
+- Harsh is a BS Engineering Science student at IISER Bhopal.
+- Focus areas include data science, machine learning, deep learning, and production...
+
+  [profile-3] meta={'chunk_index': 3, 'source': 'profile.txt'}
+    Education
+- Indian Institute of Science Education and Research (IISER), Bhopal
+  - BS Engineering Science
+  - Aug 2024 - Apr 2028
+- SMB Geeta Sr. Sec....
+
+  [profile-4] meta={'chunk_index': 4, 'source': 'profile.txt'}
+    Experience
+- Quantitative Research Consultant, WorldQuant (Part-time)
+  - Apr 2026 - Present
+- AI Intern, Baseraa (Remote)
+  - May 2025 - Jan 2026
+  -...
+
+  [profile-5] meta={'chunk_index': 5, 'source': 'profile.txt'}
+    e reconstruction and reduced rendering latency by 30%.
+  - Tech stack: Python, PyTorch, OpenCV, YOLOv8, SAM, LaMa, Stable Diffusion, NumPy, pandas, 3D...
+
+  [profile-6] meta={'chunk_index': 6, 'source': 'profile.txt'}
+    Technical Skills
+- Programming Languages: Python, SQL, C, C++
+- Machine Learning and Deep Learning: Scikit-learn, TensorFlow, Keras, PyTorch
+- Data An...
+
+  [profile-7] meta={'chunk_index': 7, 'source': 'profile.txt'}
+    Featured Projects
+1) RiskLens
+- Description: AI-powered credit risk assessment platform with real-time scoring and explainable predictions.
+- Stack: R...
+
+  [profile-8] meta={'chunk_index': 8, 'source': 'profile.txt'}
+    achieved 0.8651 ROC-AUC on 307K+ loan records.
+  - Integrated SHAP explainability and achieved KS statistic of 0.4011.
+  - Implemented JWT authenticat...
+
+  [profile-9] meta={'chunk_index': 9, 'source': 'profile.txt'}
+    PyTorch, EfficientNet-B0, FastAPI, React, Grad-CAM, MediaPipe, OpenCV
+- GitHub: https://github.com/harshjohiya/DeepTrust
+- Demo: https://deeptrust1.ve...
+
+  [profile-10] meta={'chunk_index': 10, 'source': 'profile.txt'}
+    reprocessing pipeline with MediaPipe.
+  - Achieved approximately 91-92% test accuracy with 93% fake recall on Celeb-DF v2.
+
+3) HindiASR
+- Description:...
+
+  [profile-11] meta={'chunk_index': 11, 'source': 'profile.txt'}
+    conversational ASR.
+  - Built data acquisition and preprocessing workflows.
+  - Implemented structured error taxonomy and post-processing techniques.
+...
+
+  [profile-12] meta={'chunk_index': 12, 'source': 'profile.txt'}
+    s://github.com/harshjohiya/Food-Delivery-Time-Prediction
+- Highlights:
+  - Built end-to-end ETA prediction workflow with trained scikit-learn regressi...
+
+
+=== Test Queries ===
+
+Query: 'What technologies does Harsh use?'
+  Results: 5
+python.exe : Traceback (most recent call last):
+At line:1 char:47
++ ... e\backend" ; & ".\venv\Scripts\python.exe" 
+verify_rag.py 2>&1 | Out-F ...
++                  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Trac 
+   eback (most recent call last)::String) [], Re  
+  moteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "H:\my_project\Personal 
+Website\backend\verify_rag.py", line 76, in 
+<module>
+    print(f"  [{j}] {passed} dist={dist:.4f}: 
+{preview}")
+  File "C:\Users\Asus\AppData\Local\Programs\Pytho
+n\Python311\Lib\encodings\cp1252.py", line 19, in 
+encode
+    return codecs.charmap_encode(input,self.errors
+,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode 
+character '\u2713' in position 6: character maps 
+to <undefined>
